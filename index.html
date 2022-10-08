@@ -11,23 +11,12 @@
 
   <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/cover/">
 
-
-
-
-
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 
   <!-- Favicons -->
-  <link rel="apple-touch-icon" href="/docs/5.2/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
-  <link rel="icon" href="/docs/5.2/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
-  <link rel="icon" href="/docs/5.2/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
-  <link rel="manifest" href="/docs/5.2/assets/img/favicons/manifest.json">
-  <link rel="mask-icon" href="/docs/5.2/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
-  <link rel="icon" href="/docs/5.2/assets/img/favicons/favicon.ico">
+  <!-- <link rel="icon" href="/favicon.ico"> -->
   <meta name="theme-color" content="#712cf9">
-
 
   <style>
     .bd-placeholder-img {
@@ -140,10 +129,6 @@
       padding-bottom: 20px;
     }
   </style>
-
-
-  <!-- Custom styles for this template -->
-  <!-- <link href="cover.css" rel="stylesheet"> -->
 </head>
 
 <body class="d-flex h-100 text-center text-bg-dark">
@@ -173,10 +158,11 @@
           class="btn btn-lg btn-secondary fw-bold border-white bg-white">Submit</button>
       </form>
 
+      <div id="loader" hidden>Loading...</div>
+
       <div id="alertMessage"></div>
 
     </main>
-
 
     <footer class="mt-auto text-white-50">
       <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a
@@ -191,16 +177,14 @@
 
   <script>
     const theForm = document.getElementById("emailForm");
-    // const visitorsEmail = document.forms["emailForm"]["userEmail"].value;
-    // const apiURL = "https://uft84ik3f0.execute-api.af-south-1.amazonaws.com/";
-
-
-
     theForm.addEventListener("submit", async function (event) {
       event.preventDefault();
+      // show spinner or loader
+      document.getElementById("loader").hidden = false;
+      // get email & send to API 
       const visitorsEmail = document.forms["emailForm"]["userEmail"].value;
       const apiURL = "https://uft84ik3f0.execute-api.af-south-1.amazonaws.com/";
-      reqBodyData = {"email": visitorsEmail};
+      reqBodyData = { "email": visitorsEmail };
       const response = await fetch(apiURL, {
         method: 'POST',
         headers: {
@@ -210,6 +194,9 @@
       });
       response.json().then(data => {
         console.log(data);
+        // close loader
+        document.getElementById("loader").hidden = true;
+        // show success message
         const alertSpot = document.getElementById('alertMessage');
         alertSpot.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
                                 Your email has been sent.
@@ -217,14 +204,17 @@
                               </div>`;
 
       })
-      .catch((error) => {
-      console.error('Error:', error);
-      const alertSpot = document.getElementById('alertMessage');
-        alertSpot.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        .catch((error) => {
+          console.error('Error:', error);
+          // close loader
+          document.getElementById("loader").hidden = true;
+          // show error message
+          const alertSpot = document.getElementById('alertMessage');
+          alertSpot.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 There was an error send your email.
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                               </div>`;
-  });
+        });
     });
 
   </script>
